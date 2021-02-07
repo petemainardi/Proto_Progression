@@ -111,7 +111,7 @@ public class Wanderer : MonoBehaviour
 
         NavMeshHit navHit;
         NavMesh.SamplePosition(randDirection, out navHit, this.wanderRadius, -1);
-        Debug.Log(navHit.position);
+        //Debug.Log(navHit.position);
         return navHit.position;
     }
     // ----------------------------------------------------------------------------------

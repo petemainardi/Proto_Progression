@@ -61,7 +61,7 @@ public class BounceDetector : MonoBehaviour
 
     private void Bounce(Collision collision)
     {
-        Debug.Log($"Bouncing on {collision.collider.name}:{collision.collider.GetInstanceID()}");
+        //Debug.Log($"Bouncing on {collision.collider.name}:{collision.collider.GetInstanceID()}");
 
         this.BounceDirection.Value = Vector3.up * this.bounceHeight; // TODO: Calculate collision normal for actual direction
         // TODO: probably should also bake bounce force into the vector based on the colliding object's properties

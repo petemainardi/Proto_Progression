@@ -3,8 +3,6 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
-using Sirenix.OdinInspector;
 #pragma warning disable 0649    // Variable declared but never assigned to
 
 
@@ -12,41 +10,42 @@ using Sirenix.OdinInspector;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Awards an integer-amount of points on a subscribed bounce event by emitting the points as a
- *  change in the corresponding ReactiveProperty.
+ *  Limit the number of times this may be bounced upon before perishing.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 [RequireComponent(typeof(BounceRegistrar))]
-public class BounceRewarder : MonoBehaviour, IPointsRewarder
+public class BounceDeath : MonoBehaviour
 {
     // Fields =====================================================================================
     public BounceRegistrar Registrar { get; private set; }
 
     [SerializeField]
-    private readonly int rewardPoints = 5;
-    public int RewardPoints => this.rewardPoints;
+    private readonly int bouncesToKill = 1;
+    public int NumBouncesToKill => this.bouncesToKill;
 
-    [ReadOnly]
-    public readonly IntReactiveProperty Reward = new IntReactiveProperty();
-    IntReactiveProperty IPointsRewarder.Reward => this.Reward;
+    private int numBounces;
+    public int NumBouncesUntilDeath => this.bouncesToKill - this.numBounces;
+
+    [SerializeField, Sirenix.OdinInspector.Required]
+    private GameObject ThingToKill;
     // ============================================================================================
 
     // Mono =======================================================================================
     private void Awake() => this.Registrar = this.GetComponent<BounceRegistrar>();
     private void Start()
     {
-        this.Registrar.SubscribeOnBounce(_ => this.AwardPoints());
+        this.Registrar.SubscribeOnBounce(_ => this.CountBounce());
     }
     // ============================================================================================
 
     // Events =====================================================================================
-    private void AwardPoints()
+    private void CountBounce()
     {
-        //Debug.Log($"Awarding {this.rewardPoints} points!");
-        this.Reward.Value = this.RewardPoints;  // OnNext doesn't fire unless the value actually changes,
-        this.Reward.Value = 0;                  // so we have to clear it. Not ideal, but is simplest way...
+        if (++this.numBounces >= this.bouncesToKill)
+            GameObject.Destroy(this.ThingToKill);
+        //Debug.Log($"{this.NameAndID()}: Bounced {this.numBounces}");
     }
     // ============================================================================================
 

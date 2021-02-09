@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 357946144219927618}
   - component: {fileID: 411211743798489257}
   - component: {fileID: 1521876406868924100}
+  - component: {fileID: 5428281722670835406}
   - component: {fileID: 2266034580920856271}
   m_Layer: 6
   m_Name: Bouncer
@@ -72,8 +73,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7977ce3ec3539a4a980399b3b9bb8d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Reward:
-    value: 0
+--- !u!114 &5428281722670835406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2266034580920856270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37841112c2c01f54b9f07cb052ddafc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ThingToKill: {fileID: 7603785985027383984}
 --- !u!114 &2266034580920856271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -100,6 +112,7 @@ GameObject:
   - component: {fileID: 7603785985027383985}
   - component: {fileID: 7603785985027383987}
   - component: {fileID: 7603785985027383988}
+  - component: {fileID: 7351611161172181728}
   m_Layer: 0
   m_Name: Shrinker
   m_TagString: Untagged
@@ -172,6 +185,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 10
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7351611161172181728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7603785985027383984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 961526fd65b2bb7408aba9a8537ebdeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7603785985777071172
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ using UnityEngine;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Enemy type that shrinks in size a certain number of times before perishing.
+ *  Enemy type that shrinks in size every time it is bounced upon.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -24,8 +24,6 @@ public class Shrinker : MonoBehaviour
     [SerializeField, Sirenix.OdinInspector.Required]
     public Transform TransformToShrink;
     public readonly float PercentToShrinkBy = 75;
-    public readonly float NumShrinks = 3;
-    private int numShrunk;
 	// ============================================================================================
 
 	// Mono =======================================================================================
@@ -40,14 +38,8 @@ public class Shrinker : MonoBehaviour
 	// Events =====================================================================================
     public void Shrink()
     {
-        if (this.numShrunk++ < this.NumShrinks)
-        {
-            this.TransformToShrink.localScale = this.TransformToShrink.localScale * this.PercentToShrinkBy / 100;
-        }
-        else
-        {
-            GameObject.Destroy(this.TransformToShrink.gameObject);
-        }
+        this.TransformToShrink.localScale =
+            this.TransformToShrink.localScale * this.PercentToShrinkBy / 100;
     }
 	// ============================================================================================
 	

@@ -67,8 +67,8 @@ public class BounceDetector : MonoBehaviour
     {
         if (this.canBounce)
             this.Bounce(collision);
-        else
-            Debug.Log($"Collided with {collision.collider.NameAndID()} but can't bounce.");
+        //else
+        //    Debug.Log($"Collided with {collision.collider.NameAndID()} but can't bounce.");
     }
     private void OnCollisionStay(Collision collision)
     {
@@ -77,7 +77,7 @@ public class BounceDetector : MonoBehaviour
     }
     private void OnCollisionExit(Collision collision)
     {
-        Debug.Log($"Removed {collision.collider.NameAndID()}");
+        //Debug.Log($"Removed {collision.collider.NameAndID()}");
         this.trackedColliders.Remove(collision.collider);
     }
     // ----------------------------------------------------------------------------------

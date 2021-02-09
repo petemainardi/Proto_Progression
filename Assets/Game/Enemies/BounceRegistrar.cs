@@ -42,7 +42,7 @@ public class BounceRegistrar : MonoBehaviour
         = new ReactiveDictionary<BounceDetector, CompositeDisposable>();
 
     [SerializeField, ReadOnly]
-    private List<string> allowableTags = new List<string>();
+    private List<string> allowableTags = new List<string>();    // TODO
 
     // ============================================================================================
 
@@ -147,6 +147,10 @@ public class BounceRegistrar : MonoBehaviour
         // While we are only subscribed to bounces on our collider, do we still process the event
         // for every bounce from this BounceDetector? That would be a lot of wasted cycles for one
         // of these alone, multiplied by however many exist...
+
+
+
+        // TODO: BUG in which the first bounce is not being emitted/received by subscribers!!!
     }
     // ----------------------------------------------------------------------------------
     // ============================================================================================

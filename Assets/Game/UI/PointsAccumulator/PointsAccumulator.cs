@@ -1,39 +1,58 @@
+using System;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using Sirenix.OdinInspector;
+using TMPro;
+#pragma warning disable 0649    // Variable declared but never assigned to
 
 
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Awards an integer-amount of points on a subscribed death event by emitting the points as a
- *  change in the corresponding ReactiveProperty.
+ *  This class does things...
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-public class DeathRewarder : MonoBehaviour, IPointsRewarder
+public class PointsAccumulator : MonoBehaviour
 {
     // Fields =====================================================================================
-    [SerializeField]
-    private readonly int rewardPoints = 5;
-    public int RewardPoints => this.rewardPoints;
+    private static List<PointsAccumulator> Accumulators;    // I'd like a better solution, but this will work for now...
 
-    [ReadOnly]
-    public readonly IntReactiveProperty Reward = new IntReactiveProperty();
-    IntReactiveProperty IPointsRewarder.Reward => this.Reward;
+    [SerializeField, Sirenix.OdinInspector.Required]
+    private TextMeshProUGUI Text;
+
+    public readonly IntReactiveProperty Points = new IntReactiveProperty();
     // ============================================================================================
 
     // Mono =======================================================================================
-    private void Start()
+    private void Awake()
     {
-        PointsAccumulator.RegisterWithAllAccumulators(this);
+        if (Accumulators == null)
+            Accumulators = new List<PointsAccumulator>();
+        if (!Accumulators.Contains(this))
+            Accumulators.Add(this);
+    }
+    // ============================================================================================
+
+    // Registration ===============================================================================
+    public static void RegisterWithAllAccumulators(IPointsRewarder rewarder)
+    {
+        Accumulators.ForEach(a => a.Register(rewarder));
     }
 
-    private void OnDestroy()
+    public void Register(IPointsRewarder rewarder)
     {
-        this.Reward.Value = this.RewardPoints;
+        rewarder.Reward
+            .Subscribe((int i) =>
+            {
+                this.Points.Value += i;
+                this.Text.text = this.Points.Value.ToString();
+            })
+            .AddTo(this);
     }
     // ============================================================================================
 

@@ -38,6 +38,7 @@ public class BounceRewarder : MonoBehaviour, IPointsRewarder
     private void Start()
     {
         this.Registrar.SubscribeOnBounce(_ => this.AwardPoints());
+        PointsAccumulator.RegisterWithAllAccumulators(this);
     }
     // ============================================================================================
 

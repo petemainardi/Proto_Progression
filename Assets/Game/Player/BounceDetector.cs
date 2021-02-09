@@ -49,9 +49,9 @@ public class BounceDetector : MonoBehaviour
 
     private bool canBounce;
     [SerializeField]
-    private readonly float bounceHeight = 0.5f; // TODO: replace this when magnitude is baked into BounceInfo.Direction
+    private float bounceHeight = 0.5f; // TODO: replace this when magnitude is baked into BounceInfo.Direction
     
-    public readonly ReactiveProperty<BounceInfo> BounceInfo = new ReactiveProperty<BounceInfo>();
+    public ReactiveProperty<BounceInfo> BounceInfo = new ReactiveProperty<BounceInfo>();
     // ============================================================================================
 
     // Mono =======================================================================================

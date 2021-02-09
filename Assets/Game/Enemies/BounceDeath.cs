@@ -22,7 +22,7 @@ public class BounceDeath : MonoBehaviour
     public BounceRegistrar Registrar { get; private set; }
 
     [SerializeField]
-    private readonly int bouncesToKill = 1;
+    private int bouncesToKill = 1;
     public int NumBouncesToKill => this.bouncesToKill;
 
     private int numBounces;

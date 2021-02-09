@@ -17,7 +17,7 @@ public class DeathRewarder : MonoBehaviour, IPointsRewarder
 {
     // Fields =====================================================================================
     [SerializeField]
-    private readonly int rewardPoints = 5;
+    private int rewardPoints = 5;
     public int RewardPoints => this.rewardPoints;
 
     [ReadOnly]

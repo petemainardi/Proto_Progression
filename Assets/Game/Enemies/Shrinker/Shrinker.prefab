@@ -85,6 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37841112c2c01f54b9f07cb052ddafc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bouncesToKill: 4
   ThingToKill: {fileID: 7603785985027383984}
 --- !u!114 &2266034580920856271
 MonoBehaviour:

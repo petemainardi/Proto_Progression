@@ -25,7 +25,7 @@ public class PointsAccumulator : MonoBehaviour
     [SerializeField, Sirenix.OdinInspector.Required]
     private TextMeshProUGUI Text;
 
-    public readonly IntReactiveProperty Points = new IntReactiveProperty();
+    public IntReactiveProperty Points = new IntReactiveProperty();
     // ============================================================================================
 
     // Mono =======================================================================================

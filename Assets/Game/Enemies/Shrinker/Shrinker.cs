@@ -22,8 +22,10 @@ public class Shrinker : MonoBehaviour
     private BounceRegistrar BounceRegistrar;
     
     [SerializeField, Sirenix.OdinInspector.Required]
-    public Transform TransformToShrink;
-    public readonly float PercentToShrinkBy = 75;
+    private Transform TransformToShrink;
+
+    [SerializeField]
+    private float PercentToShrinkBy = 75;
 	// ============================================================================================
 
 	// Mono =======================================================================================

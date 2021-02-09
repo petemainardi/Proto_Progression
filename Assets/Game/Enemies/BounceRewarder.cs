@@ -25,11 +25,11 @@ public class BounceRewarder : MonoBehaviour, IPointsRewarder
     public BounceRegistrar Registrar { get; private set; }
 
     [SerializeField]
-    private readonly int rewardPoints = 5;
+    private int rewardPoints = 5;
     public int RewardPoints => this.rewardPoints;
 
     [ReadOnly]
-    public readonly IntReactiveProperty Reward = new IntReactiveProperty();
+    public IntReactiveProperty Reward = new IntReactiveProperty();
     IntReactiveProperty IPointsRewarder.Reward => this.Reward;
     // ============================================================================================
 

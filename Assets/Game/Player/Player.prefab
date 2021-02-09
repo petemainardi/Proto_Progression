@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 879842610135218705}
   - component: {fileID: 879842610135218711}
   - component: {fileID: 879842610135218704}
+  - component: {fileID: 553430823}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -68,6 +69,29 @@ MonoBehaviour:
   jumpSpeed: 0.5
   gravity: 2
   bouncer: {fileID: 6963584342320741766}
+--- !u!114 &553430823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 879842610135218707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 916565526bc3e17459e6005f25898c0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DamagingLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  HealingLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  Health:
+    value: 5
+  invulnerabilityLength: 2
+  IsInvulnerable:
+    value: 0
 --- !u!1 &879842610705211077
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,5 +247,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0479dc71b2a60064b9082f05b555b966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BounceDirection:
-    value: {x: 0, y: 0, z: 0}
+  bounceHeight: 0.5

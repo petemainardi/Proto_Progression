@@ -12,12 +12,21 @@ using UnityEngine;
 // ================================================================================================
 public static class UnityObjectExtensions
 {
-    // Whether this gameobject is a scene-instance or a prefab
-    public static bool IsPrefab(this GameObject obj)
+    public static string NameAndID(this UnityEngine.Object obj)
     {
-        return obj.scene.rootCount == 0;    // return obj.scene.name == null; would also work
+        return $"{obj.name}:{obj.GetInstanceID()}";
     }
-
+}
+// ================================================================================================
+// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+// ================================================================================================
+public static class GameObjectExtensions
+{
+    // Whether this gameobject is a scene-instance or a prefab
+    public static bool IsPrefab(this GameObject gObj)
+    {
+        return gObj.scene.rootCount == 0;    // return obj.scene.name == null; would also work
+    }
 }
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

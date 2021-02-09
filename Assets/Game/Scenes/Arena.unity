@@ -196,6 +196,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 815743898149254228, guid: ba4698cb437e36044b681b368f18540a, type: 3}
+      propertyPath: bouncer
+      value: 
+      objectReference: {fileID: 885878724}
     - target: {fileID: 8631926412531335200, guid: ba4698cb437e36044b681b368f18540a, type: 3}
       propertyPath: m_Name
       value: Wanderer
@@ -247,6 +251,18 @@ PrefabInstance:
     - target: {fileID: 8631926412531335202, guid: ba4698cb437e36044b681b368f18540a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631926413262149335, guid: ba4698cb437e36044b681b368f18540a, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631926413262149335, guid: ba4698cb437e36044b681b368f18540a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 153c311d0e4004347b32a730ba5529cb, type: 2}
+    - target: {fileID: 8631926413262149335, guid: ba4698cb437e36044b681b368f18540a, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8940229133257419451, guid: ba4698cb437e36044b681b368f18540a, type: 3}
@@ -344,6 +360,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &885878724 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6963584342320741766, guid: afa0d060b46374b44911777ab73f5114, type: 3}
+  m_PrefabInstance: {fileID: 4074207006357035061}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0479dc71b2a60064b9082f05b555b966, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -493,7 +520,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: cc08a396f9d431741baf53a09a60cb95, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

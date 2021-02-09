@@ -11,11 +11,37 @@ using UniRx;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  This class does things...
+ *  Encapsulate matadata about the occurance of a bounce.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
+public struct BounceInfo
+{
+    public Vector3 Direction { get; private set; }
+    public Collider BouncedOn { get; private set; }
+
+    public BounceInfo(Vector3 direction, Collider bouncedOn)
+    {
+        this.Direction = direction;
+        this.BouncedOn = bouncedOn;
+    }
+}
+// ================================================================================================
+// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+// ================================================================================================
+/**
+ *  Tracks collisions to determine whether/when a bounce occurs.
+ *  
+ *  NOTE: The purpose of this class is to decide WHEN a bounce happens (according to a supplied
+ *  condition that allows the possibility for a bounce). What that condition is, and how to respond
+ *  to a bounce event, are not the concerns of this class. A bounce event is signalled by changing
+ *  the BounceInfo value, so subscribe to it to respond.
+ */
+// ================================================================================================
+// ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+// ================================================================================================
+[RequireComponent(typeof(Collider))]
 public class BounceDetector : MonoBehaviour
 {
     // Fields =====================================================================================
@@ -23,21 +49,26 @@ public class BounceDetector : MonoBehaviour
 
     private bool canBounce;
     [SerializeField]
-    private float bounceHeight = 0.5f; // TODO: replace this when magnitude is baked into BounceDirection
-
-    public Vector3ReactiveProperty BounceDirection = new Vector3ReactiveProperty();
+    private readonly float bounceHeight = 0.5f; // TODO: replace this when magnitude is baked into BounceInfo.Direction
+    
+    public readonly ReactiveProperty<BounceInfo> BounceInfo = new ReactiveProperty<BounceInfo>();
     // ============================================================================================
 
     // Mono =======================================================================================
-
-
-
+    // Startup --------------------------------------------------------------------------
+    private void Awake()
+    {
+        if (this.gameObject.layer != LayerMask.NameToLayer("Bouncing"))
+            Debug.LogWarning($"{this.NameAndID()} has a BounceDetector, it should be on the Bouncing layer.");
+    }
+    // ----------------------------------------------------------------------------------
+    // Collision ------------------------------------------------------------------------
     private void OnCollisionEnter(Collision collision)
     {
-        //Debug.Log($"Collided with {collision.collider.name}:{collision.collider.GetInstanceID()}.");
-
         if (this.canBounce)
             this.Bounce(collision);
+        else
+            Debug.Log($"Collided with {collision.collider.NameAndID()} but can't bounce.");
     }
     private void OnCollisionStay(Collision collision)
     {
@@ -46,8 +77,10 @@ public class BounceDetector : MonoBehaviour
     }
     private void OnCollisionExit(Collision collision)
     {
+        Debug.Log($"Removed {collision.collider.NameAndID()}");
         this.trackedColliders.Remove(collision.collider);
     }
+    // ----------------------------------------------------------------------------------
     // ============================================================================================
 
     // ==================================================================================
@@ -61,13 +94,13 @@ public class BounceDetector : MonoBehaviour
 
     private void Bounce(Collision collision)
     {
-        //Debug.Log($"Bouncing on {collision.collider.name}:{collision.collider.GetInstanceID()}");
+        //Debug.Log($"Bouncing on {collision.collider.NameAndID()}.");
 
-        this.BounceDirection.Value = Vector3.up * this.bounceHeight; // TODO: Calculate collision normal for actual direction
-        // TODO: probably should also bake bounce force into the vector based on the colliding object's properties
+        this.BounceInfo.Value = new BounceInfo(Vector3.up * this.bounceHeight, collision.collider); // TODO: Calculate collision normal for actual direction
+        // TODO: probably should also bake bounce force into the vector based on the colliding object's properties instead of using bounceHeight
         this.trackedColliders.Add(collision.collider);
 
-        this.BounceDirection.Value = Vector3.zero;
+        this.BounceInfo.Value = default;    // Not ideal, but only emits when value completely changes so...
     }
     // ============================================================================================
 

@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 863643839290473074}
   - component: {fileID: 1926272184828540626}
+  - component: {fileID: 2015425298543891001}
+  - component: {fileID: 815743898149254228}
   m_Layer: 6
   m_Name: Bouncer
   m_TagString: Untagged
@@ -44,6 +46,33 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.05, y: 0.25, z: 1.05}
   m_Center: {x: 0, y: -0.05, z: 0}
+--- !u!114 &2015425298543891001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89581840260746334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c20184afcb8673459b9639fa6ede235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowableTags: []
+--- !u!114 &815743898149254228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89581840260746334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7977ce3ec3539a4a980399b3b9bb8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Reward:
+    value: 0
 --- !u!1 &8631926412531335200
 GameObject:
   m_ObjectHideFlags: 0

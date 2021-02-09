@@ -11,7 +11,11 @@ using UniRx;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  This class does things...
+ *  Responsible for determining by how much to move the assocatiated CharacterController,
+ *  accounting for:
+ *      - Player input
+ *      - Bounce triggers
+ *      - Groundedness state
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -47,15 +51,15 @@ public class CharacterMover : MonoBehaviour
             .AddTo(this);
 
         if (this.bouncer == null)
-            Debug.LogError($"{this.name}'s CharacterMover is missing a reference to a BounceDetector.");
+            Debug.LogError($"{this.NameAndID()}'s CharacterMover is missing a reference to a BounceDetector.");
 	}
 	// ----------------------------------------------------------------------------------
 	void Start ()
 	{
         this.bouncer.SetBounceCondition(this.CanBounce);
-        this.bouncer.BounceDirection
-            .Where((Vector3 v) => v.sqrMagnitude > 0)
-            .Subscribe((Vector3 v) => this.Bounce(v))
+        this.bouncer.BounceInfo
+            .Where((BounceInfo b) => b.BouncedOn != null)
+            .Subscribe((BounceInfo b) => this.Bounce(b.Direction))
             .AddTo(this);
 	}
 	// ----------------------------------------------------------------------------------
@@ -89,6 +93,10 @@ public class CharacterMover : MonoBehaviour
 
     private void Bounce(Vector3 direction)
     {
+        //Debug.Log($"Bouncing with force {direction}");
+        //if (!this.bounceForce.Equals(Vector3.zero))
+        //    Debug.Log($".. but already bouncing with force {this.bounceForce}!");
+
         this.bounceForce = direction;
     }
     // ============================================================================================

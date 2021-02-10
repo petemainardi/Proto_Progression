@@ -16,6 +16,10 @@ using UniRx;
  *      - Player input
  *      - Bounce triggers
  *      - Groundedness state
+ *      
+ *  TEMP: Sprint capability is patched in here for demo purposes.
+ *  TODO: Extra abilities should be abstracted to separate components.
+ *  TODO: Could probably leverage AddForce to abstract bouncing out to a separate component.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -26,7 +30,9 @@ public class CharacterMover : MonoBehaviour
     // Fields =====================================================================================
     [SerializeField]
     private float moveSpeed = 6.8f;
+    [SerializeField, Sirenix.OdinInspector.ReadOnly]
     private Vector3 moveDir = Vector3.zero;
+    public Vector3 Movement => this.moveDir;
 
     [SerializeField]
     private float jumpSpeed = 0.5f;
@@ -41,6 +47,11 @@ public class CharacterMover : MonoBehaviour
     private Vector3 bounceForce;
 
     private CharacterController charControl;
+
+    // TEMP
+    [Sirenix.OdinInspector.Required]
+    public PlayerData PlayerData;
+    public float sprintMultiplier = 1.5f;
 	// ============================================================================================
 
 	// Mono =======================================================================================
@@ -54,6 +65,9 @@ public class CharacterMover : MonoBehaviour
 
         if (this.bouncer == null)
             Debug.LogError($"{this.NameAndID()}'s CharacterMover is missing a reference to a BounceDetector.");
+
+        if (this.PlayerData.HasDoubleJump)
+            this.gameObject.AddComponent<DoubleJump>();
 	}
 	// ----------------------------------------------------------------------------------
 	void Start ()
@@ -64,8 +78,8 @@ public class CharacterMover : MonoBehaviour
             .Subscribe((BounceInfo b) => this.Bounce(b.Direction))
             .AddTo(this);
 	}
-	// ----------------------------------------------------------------------------------
-	void FixedUpdate ()
+    // ----------------------------------------------------------------------------------
+    void FixedUpdate ()
 	{
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
@@ -73,6 +87,9 @@ public class CharacterMover : MonoBehaviour
         Vector3 inputDir = new Vector3(x, 0, z).normalized;
         Vector3 transformDir = inputDir;// this.transform.TransformDirection(inputDir);
         Vector3 flatMovement = transformDir * this.moveSpeed * Time.deltaTime;
+
+        if (Input.GetButton("Fire1") && PlayerData.HasSprint && this.charControl.isGrounded)
+            flatMovement *= sprintMultiplier;
 
         // TODO: If in air, dampen flat movement according to momentum
 
@@ -92,7 +109,9 @@ public class CharacterMover : MonoBehaviour
     // ============================================================================================
 
     // Helpers ====================================================================================
-    private bool PlayerJumped => this.charControl.isGrounded && Input.GetButton("Jump");
+    public bool IsGrounded => this.charControl.isGrounded;
+
+    private bool PlayerJumped => Input.GetButton("Jump") && this.charControl.isGrounded;
 
     private void Bounce(Vector3 direction)
     {
@@ -101,6 +120,11 @@ public class CharacterMover : MonoBehaviour
         //    Debug.Log($".. but already bouncing with force {this.bounceForce}!");
 
         this.bounceForce = direction;
+    }
+
+    public void AddForce(Vector3 force)
+    {
+        this.moveDir += force;
     }
     // ============================================================================================
 

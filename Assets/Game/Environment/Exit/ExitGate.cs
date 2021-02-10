@@ -4,56 +4,65 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using TMPro;
-#pragma warning disable 0649    // Variable declared but never assigned to
+using UniRx.Triggers;
+using Sirenix.OdinInspector;
+using UnityEngine.SceneManagement;
 
 
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Allow IPointsRewarders to tell this to listen to when the award points, collecting the results
- *  in this central location.
+ *  When the player enters our collider area, trigger a transition to the next scene.
+ *  (... by destroying the player... XD)
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-public class PointsAccumulator : MonoBehaviour
+[RequireComponent(typeof(Collider))]
+public class ExitGate : MonoBehaviour
 {
     // Fields =====================================================================================
-    private static List<PointsAccumulator> Accumulators;    // I'd like a better solution, but this will work for now...
+    [SerializeField, Required]
+    private PlayerData PlayerData;
 
-    [SerializeField, Sirenix.OdinInspector.Required]
-    private TextMeshProUGUI Text;
+    [SerializeField, Required]
+    private HealthTracker PlayerHealth;
 
-    public IntReactiveProperty Points = new IntReactiveProperty();
+    [SerializeField, Required]
+    private PointsAccumulator Points;
     // ============================================================================================
-
     // Mono =======================================================================================
     private void Awake()
     {
-        if (Accumulators == null)
-            Accumulators = new List<PointsAccumulator>();
-        if (!Accumulators.Contains(this))
-            Accumulators.Add(this);
+        if (!this.GetComponent<Collider>().isTrigger)
+            Debug.LogError($"The Collider on ExitGate {this.NameAndID()} should be a trigger.");
+    }
+
+    private void Start()
+    {
+        this.PlayerHealth
+            .OnDestroyAsObservable()
+            .Subscribe(_ => this.EndRun())
+            .AddTo(this);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other == PlayerHealth.Collider)
+            GameObject.Destroy(other.gameObject);
     }
     // ============================================================================================
 
-    // Registration ===============================================================================
-    public static void RegisterWithAllAccumulators(IPointsRewarder rewarder)
+    // ==================================================================================
+    private void EndRun()
     {
-        Accumulators.ForEach(a => a.Register(rewarder));
-    }
+        if (this.PlayerHealth.Health.Value > 0)
+        {
+            this.PlayerData.Points += this.Points.Points.Value;
+        }
 
-    public void Register(IPointsRewarder rewarder)
-    {
-        rewarder.Reward
-            .Subscribe((int i) =>
-            {
-                this.Points.Value += i;
-                this.Text.text = this.Points.Value.ToString();
-            })
-            .AddTo(this);
+        SceneManager.LoadScene(1);
     }
     // ============================================================================================
 

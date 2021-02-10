@@ -33,12 +33,24 @@ public class HealthTracker : MonoBehaviour
     private float invulnerabilityTimer = 0;
 
     public BoolReactiveProperty IsInvulnerable = new BoolReactiveProperty();
+
+    public bool DieAtZeroHealth = true; // TODO: Might need to replace with a DeathHandler for animations, etc.
+    
+    public Collider Collider { get; private set; }
 	// ============================================================================================
 
 	// Mono =======================================================================================
 	void Awake ()
 	{
+        this.Collider = this.GetComponent<Collider>();
+
         this.MaxHealth = this.Health.Value;
+
+        if (this.DieAtZeroHealth)
+            this.Health
+                .Where((int h) => h == 0)
+                .Subscribe((int h) => GameObject.Destroy(this.gameObject))
+                .AddTo(this);
     }
 	// ----------------------------------------------------------------------------------
 	void Update ()

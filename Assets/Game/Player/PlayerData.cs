@@ -10,42 +10,19 @@ using UnityEngine;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Follow a target transform's movement in the XZ plane while maintaining the existing offset from
- *  that transform.
+ *  Hold persistent info about the player and their progress.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-public class FollowXZ : MonoBehaviour
+[CreateAssetMenu(fileName = "PlayerData", menuName = "Player Data")]
+[Serializable]
+public class PlayerData : ScriptableObject
 {
     // Fields =====================================================================================
-    public Transform target;
-    private Vector3 offset;
+    public int Points;
 
-    public float followSpeed = 0.2f;
-	// ============================================================================================
-
-	// Mono =======================================================================================
-	// ----------------------------------------------------------------------------------
-	void Start ()
-	{
-        if (this.target == null)
-            Debug.LogError($"FollowXZ component on {this.name}:{this.GetInstanceID()} is missing a target.");
-
-        this.offset = this.target.position - this.transform.position;
-	}
-	// ----------------------------------------------------------------------------------
-	void Update ()
-	{
-        if (target != null)
-        {
-            Vector3 targetPos = this.target.position - this.offset;
-            targetPos.y = this.transform.position.y;
-
-            this.transform.position = Vector3.MoveTowards(this.transform.position, targetPos, this.followSpeed);
-        }
-    }
-	// ----------------------------------------------------------------------------------
+    public bool HasDoubleJump; // TODO: This is just to demonstrate, eventually will replace with ability system...
 	// ============================================================================================
 	
 }

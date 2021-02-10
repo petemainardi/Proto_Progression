@@ -7,3 +7,4 @@ The word "different" may seem superfluous until you understand that it is applie
 [NOTE: This project references paid assets that cannot be publicly redistributed. The project may not work correctly without importing these assets.]
 - DOTween (Assets/Plugins/Demigiant)
 - OdinInspector (Assets/Plugins/Sirenix)
+- UModeler (Assets/tripolygon)

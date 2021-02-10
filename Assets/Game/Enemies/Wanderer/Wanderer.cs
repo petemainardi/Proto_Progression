@@ -64,7 +64,10 @@ public class Wanderer : MonoBehaviour
     // ----------------------------------------------------------------------------------
     void Update()
     {
-        Vector3 target = this.aggroTarget?.position ?? this.CheckWander();
+        Vector3 target = this.aggroTarget != null
+            ? this.aggroTarget.position
+            : target = this.CheckWander();
+
         this.agent.SetDestination(target);
     }
     // ----------------------------------------------------------------------------------

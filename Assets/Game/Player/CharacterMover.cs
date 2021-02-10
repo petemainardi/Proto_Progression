@@ -32,6 +32,8 @@ public class CharacterMover : MonoBehaviour
     private float jumpSpeed = 0.5f;
     [SerializeField]
     private float gravity = 2f;
+    [SerializeField]
+    private float maxCombinedJumpSpeed = 0.7f; // Limit bonus height from jump + bounce
 
     [SerializeField]
     private BounceDetector bouncer;
@@ -82,6 +84,7 @@ public class CharacterMover : MonoBehaviour
             : this.moveDir.y - this.gravity * Time.deltaTime;
 
         this.moveDir += this.bounceForce;
+        this.moveDir.y = Math.Min(this.moveDir.y, this.maxCombinedJumpSpeed);
         this.bounceForce = Vector3.zero;
 
         this.charControl.Move(this.moveDir);

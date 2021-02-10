@@ -49,7 +49,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -68,6 +68,7 @@ MonoBehaviour:
   moveSpeed: 6.8
   jumpSpeed: 0.5
   gravity: 2
+  maxCombinedJumpSpeed: 0.7
   bouncer: {fileID: 6963584342320741766}
 --- !u!114 &553430823
 MonoBehaviour:
@@ -92,6 +93,7 @@ MonoBehaviour:
   invulnerabilityLength: 2
   IsInvulnerable:
     value: 0
+  DieAtZeroHealth: 1
 --- !u!1 &879842610705211077
 GameObject:
   m_ObjectHideFlags: 0

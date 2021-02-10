@@ -10,22 +10,23 @@ using UnityEngine;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Hold persistent info about the player and their progress.
+ *  TEMP: Reset state of PlayerData to default.
+ *  TODO: Amend this to work with actual data.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-[CreateAssetMenu(fileName = "PlayerData", menuName = "Player Data")]
-[Serializable]
-public class PlayerData : ScriptableObject
+public class ResetButton : MonoBehaviour
 {
-    // Fields =====================================================================================
-    public int Points;
+    [Sirenix.OdinInspector.Required]
+    public PlayerData PlayerData;
 
-    public bool HasDoubleJump;  // TODO: These are just to demonstrate, eventually will
-    public bool HasSprint;      // replace with actual ability system...
-	// ============================================================================================
-	
+    public void Reset()
+    {
+        this.PlayerData.Points = 0;
+        this.PlayerData.HasDoubleJump = false;
+        this.PlayerData.HasSprint = false;
+    }
 }
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

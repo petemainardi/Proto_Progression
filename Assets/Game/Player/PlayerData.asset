@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Points: 0
   HasDoubleJump: 0
+  HasSprint: 0

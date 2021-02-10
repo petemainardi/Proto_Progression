@@ -3,6 +3,9 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+using UniRx;
 #pragma warning disable 0649    // Variable declared but never assigned to
 
 
@@ -10,22 +13,43 @@ using UnityEngine;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Hold persistent info about the player and their progress.
+ *  TEMP: Update the text of the player's point count to reflect the PlayerData state.
+ *  TODO: Do this in a less ugly way...
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-[CreateAssetMenu(fileName = "PlayerData", menuName = "Player Data")]
-[Serializable]
-public class PlayerData : ScriptableObject
+[RequireComponent(typeof(TextMeshProUGUI))]
+public class PointsText : MonoBehaviour
 {
-    // Fields =====================================================================================
-    public int Points;
+    [Sirenix.OdinInspector.Required]
+    public PlayerData PlayerData;
 
-    public bool HasDoubleJump;  // TODO: These are just to demonstrate, eventually will
-    public bool HasSprint;      // replace with actual ability system...
-	// ============================================================================================
-	
+    private TextMeshProUGUI TextMesh;
+
+    private void Awake()
+    {
+        this.TextMesh = this.GetComponent<TextMeshProUGUI>();
+
+        this.PlayerData
+            .ObserveEveryValueChanged((PlayerData p) => p.Points)
+            .Subscribe((int p) => this.ReplaceText(p))
+            .AddTo(this);
+    }
+
+
+    public void ReplaceText(int points)
+    {
+        var text = this.TextMesh.text.Split(' ');
+        this.TextMesh.text = $"{text[0]} {text[1]} {points}";
+    }
+
+    public void Reset()
+    {
+        this.PlayerData.Points = 0;
+        this.PlayerData.HasDoubleJump = false;
+    }
+
 }
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

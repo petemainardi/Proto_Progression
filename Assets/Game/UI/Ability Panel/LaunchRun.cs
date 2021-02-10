@@ -1,31 +1,22 @@
-using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-#pragma warning disable 0649    // Variable declared but never assigned to
+using UnityEngine.SceneManagement;
 
 
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Hold persistent info about the player and their progress.
+ *  Transition to the Arena scene to start a new run.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-[CreateAssetMenu(fileName = "PlayerData", menuName = "Player Data")]
-[Serializable]
-public class PlayerData : ScriptableObject
+public class LaunchRun : MonoBehaviour
 {
-    // Fields =====================================================================================
-    public int Points;
-
-    public bool HasDoubleJump;  // TODO: These are just to demonstrate, eventually will
-    public bool HasSprint;      // replace with actual ability system...
-	// ============================================================================================
-	
+    public void Launch()
+    {
+        SceneManager.LoadScene(0);
+    }
 }
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

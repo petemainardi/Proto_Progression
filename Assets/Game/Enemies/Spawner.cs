@@ -105,9 +105,8 @@ public class Spawner : SerializedMonoBehaviour
     private void Spawn(GameObject g)
     {
         Bounds bounds = this.SpawnArea.bounds;
-        float minDimension = Mathf.Min(
+        float minDimension = Math.Min(
             bounds.extents.x,
-            bounds.extents.y,
             bounds.extents.z
             );
 

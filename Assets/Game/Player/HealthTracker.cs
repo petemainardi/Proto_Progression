@@ -24,6 +24,7 @@ public class HealthTracker : MonoBehaviour
     // Fields =====================================================================================
     public LayerMask DamagingLayers;
     public LayerMask HealingLayers;
+    private LayerMask storageLayer = 0;
 
     public IntReactiveProperty Health = new IntReactiveProperty(5);
     public int MaxHealth { get; private set; }
@@ -44,6 +45,13 @@ public class HealthTracker : MonoBehaviour
 	{
         this.Collider = this.GetComponent<Collider>();
 
+        this.storageLayer = this.HealingLayers;
+        this.Health.Subscribe((int h) =>
+            this.HealingLayers = h < this.MaxHealth
+            ? this.storageLayer
+            : (LayerMask) 0
+            ).AddTo(this);
+
         this.MaxHealth = this.Health.Value;
 
         if (this.DieAtZeroHealth)
@@ -63,27 +71,28 @@ public class HealthTracker : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //if (collision.collider.gameObject.name.Equals("Ground") || collision.collider.gameObject.name.Equals("Player")) return;
-        this.CheckCollision(collision.gameObject.layer);
+        this.CheckCollision(collision.gameObject);
     }
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         //if (hit.collider.gameObject.name.Equals("Ground") || hit.collider.gameObject.name.Equals("Player")) return;
-        this.CheckCollision(hit.gameObject.layer);
+        this.CheckCollision(hit.gameObject);
     }
     // ============================================================================================
 
-    private void CheckCollision(int layer)
+    private void CheckCollision(GameObject other)
     {
-        if ((this.DamagingLayers & (1 << layer)) != 0
+        if ((this.DamagingLayers & (1 << other.layer)) != 0
             && !this.IsInvulnerable.Value)
         {
             this.Health.Value = Math.Max(this.Health.Value - 1, 0);
             this.invulnerabilityTimer = this.invulnerabilityLength;
             this.IsInvulnerable.Value = true;
         }
-        else if ((this.HealingLayers.value & (1 << layer)) != 0)
+        else if ((this.HealingLayers.value & (1 << other.layer)) != 0)
         {
             this.Health.Value = Math.Min(this.Health.Value + 1, this.MaxHealth);
+            GameObject.Destroy(other);
         }
     }
 

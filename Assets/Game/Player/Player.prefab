@@ -66,10 +66,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6.8
+  moveDir: {x: 0, y: 0, z: 0}
   jumpSpeed: 0.5
   gravity: 2
   maxCombinedJumpSpeed: 0.7
   bouncer: {fileID: 6963584342320741766}
+  PlayerData: {fileID: 0}
+  sprintMultiplier: 1.5
 --- !u!114 &553430823
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -65,14 +65,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8ed1b36c5b1f4743834b715dd121c82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 6.8
+  MoveSpeed: 6.8
   moveDir: {x: 0, y: 0, z: 0}
-  jumpSpeed: 0.5
-  gravity: 2
-  maxCombinedJumpSpeed: 0.7
-  bouncer: {fileID: 6963584342320741766}
+  JumpSpeed: 0.5
+  Gravity: 2
+  MaxCombinedJumpSpeed: 0.7
+  Bouncer: {fileID: 6963584342320741766}
   PlayerData: {fileID: 0}
-  sprintMultiplier: 1.5
+  SprintMultiplier: 1.5
 --- !u!114 &553430823
 MonoBehaviour:
   m_ObjectHideFlags: 0

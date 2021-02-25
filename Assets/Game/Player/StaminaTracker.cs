@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UniRx;
 #pragma warning disable 0649    // Variable declared but never assigned to
 
@@ -12,34 +11,35 @@ using UniRx;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Adjust a fillable image to reflect changes in a health value from a HealthTracker.
+ *  Manage a percentage representing a stamina value.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-public class HealthBar : MonoBehaviour
+public class StaminaTracker : MonoBehaviour
 {
-    // Fields =====================================================================================
-    [SerializeField]
-    private HealthTracker tracker;
+	// Fields =====================================================================================
+	public FloatReactiveProperty StaminaPercentage = new FloatReactiveProperty(1f);
 
-    [SerializeField, Sirenix.OdinInspector.Required]
-    private Image FillImage;
+	[SerializeField, Range(0, 1)]
+	private float StaminaRegenPerSecond = 0.05f;
 	// ============================================================================================
 
 	// Mono =======================================================================================
-	// ----------------------------------------------------------------------------------
-	void Start ()
+	private void Update()
 	{
-        if (this.tracker == null)
-            Debug.LogError($"{this.NameAndID()}'s HealthBar is missing a reference to a HealthTracker.");
-
-        this.tracker.Health
-            .Subscribe((int h) => this.FillImage.fillAmount = (float)h / (float)this.tracker.MaxHealth)
-            .AddTo(this);
+		this.StaminaPercentage.Value = 
+			Math.Min(1, this.StaminaPercentage.Value + this.StaminaRegenPerSecond * Time.deltaTime);
 	}
-	// ----------------------------------------------------------------------------------
 	// ============================================================================================
+
+	// Public Interface ===========================================================================
+	public void UseStamina(float percentage)
+    {
+		this.StaminaPercentage.Value = Math.Max(0, this.StaminaPercentage.Value - percentage);
+    }
+	// ============================================================================================
+
 }
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

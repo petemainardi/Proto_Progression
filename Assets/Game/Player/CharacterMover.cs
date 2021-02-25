@@ -29,41 +29,41 @@ public class CharacterMover : MonoBehaviour
 {
     // Fields =====================================================================================
     [SerializeField]
-    private float moveSpeed = 6.8f;
+    public float MoveSpeed = 6.8f;
     [SerializeField, Sirenix.OdinInspector.ReadOnly]
     private Vector3 moveDir = Vector3.zero;
     public Vector3 Movement => this.moveDir;
 
     [SerializeField]
-    private float jumpSpeed = 0.5f;
+    private float JumpSpeed = 0.5f;
     [SerializeField]
-    private float gravity = 2f;
+    private float Gravity = 2f;
     [SerializeField]
-    private float maxCombinedJumpSpeed = 0.7f; // Limit bonus height from jump + bounce
+    private float MaxCombinedJumpSpeed = 0.7f; // Limit bonus height from jump + bounce
 
     [SerializeField]
-    private BounceDetector bouncer;
+    private BounceDetector Bouncer;
     private BoolReactiveProperty CanBounce = new BoolReactiveProperty();
     private Vector3 bounceForce;
 
-    private CharacterController charControl;
+    private CharacterController CharControl;
 
     // TEMP
     [Sirenix.OdinInspector.Required]
     public PlayerData PlayerData;
-    public float sprintMultiplier = 1.5f;
+    public float SprintMultiplier = 1.5f;
 	// ============================================================================================
 
 	// Mono =======================================================================================
 	void Awake ()
 	{
-        this.charControl = this.GetComponent<CharacterController>();
-        this.charControl
+        this.CharControl = this.GetComponent<CharacterController>();
+        this.CharControl
             .ObserveEveryValueChanged(c => c.velocity)
             .Subscribe((Vector3 v) => this.CanBounce.Value = v.y < 0)
             .AddTo(this);
 
-        if (this.bouncer == null)
+        if (this.Bouncer == null)
             Debug.LogError($"{this.NameAndID()}'s CharacterMover is missing a reference to a BounceDetector.");
 
         if (this.PlayerData.HasDoubleJump)
@@ -72,8 +72,8 @@ public class CharacterMover : MonoBehaviour
 	// ----------------------------------------------------------------------------------
 	void Start ()
 	{
-        this.bouncer.SetBounceCondition(this.CanBounce);
-        this.bouncer.BounceInfo
+        this.Bouncer.SetBounceCondition(this.CanBounce);
+        this.Bouncer.BounceInfo
             .Where((BounceInfo b) => b.BouncedOn != null)
             .Subscribe((BounceInfo b) => this.Bounce(b.Direction))
             .AddTo(this);
@@ -86,32 +86,32 @@ public class CharacterMover : MonoBehaviour
 
         Vector3 inputDir = new Vector3(x, 0, z).normalized;
         Vector3 transformDir = inputDir;// this.transform.TransformDirection(inputDir);
-        Vector3 flatMovement = transformDir * this.moveSpeed * Time.deltaTime;
+        Vector3 flatMovement = transformDir * this.MoveSpeed * Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && PlayerData.HasSprint && this.charControl.isGrounded)
-            flatMovement *= sprintMultiplier;
+        if (Input.GetButton("Fire1") && PlayerData.HasSprint && this.CharControl.isGrounded)
+            flatMovement *= SprintMultiplier;
 
         // TODO: If in air, dampen flat movement according to momentum
 
         this.moveDir = new Vector3(flatMovement.x, this.moveDir.y, flatMovement.z);
         this.moveDir.y = this.PlayerJumped
-            ? this.jumpSpeed
-            : this.charControl.isGrounded || this.bounceForce.y > 0
+            ? this.JumpSpeed
+            : this.CharControl.isGrounded || this.bounceForce.y > 0
             ? 0f
-            : this.moveDir.y - this.gravity * Time.deltaTime;
+            : this.moveDir.y - this.Gravity * Time.deltaTime;
 
         this.moveDir += this.bounceForce;
-        this.moveDir.y = Math.Min(this.moveDir.y, this.maxCombinedJumpSpeed);
+        this.moveDir.y = Math.Min(this.moveDir.y, this.MaxCombinedJumpSpeed);
         this.bounceForce = Vector3.zero;
 
-        this.charControl.Move(this.moveDir);
+        this.CharControl.Move(this.moveDir);
 	}
     // ============================================================================================
 
     // Helpers ====================================================================================
-    public bool IsGrounded => this.charControl.isGrounded;
+    public bool IsGrounded => this.CharControl.isGrounded;
 
-    private bool PlayerJumped => Input.GetButton("Jump") && this.charControl.isGrounded;
+    public bool PlayerJumped => Input.GetButton("Jump") && this.CharControl.isGrounded;
 
     private void Bounce(Vector3 direction)
     {

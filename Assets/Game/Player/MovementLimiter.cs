@@ -18,13 +18,13 @@ using Sirenix.OdinInspector;
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-[RequireComponent(typeof(CharacterMover))]
+[RequireComponent(typeof(ECM_Controller))]
 public class MovementLimiter : MonoBehaviour
 {
 	// Fields =====================================================================================
 	[SerializeField, Required] private StaminaTracker Stamina;
 
-	private CharacterMover Mover;
+	private ECM_Controller Mover;
 	private float OriginalMoveSpeed;
 	[SerializeField, Range(0, 1)] private float GroundedSpeedPercent = 0.2f;
 	[SerializeField, Range(0, 1)] private float AirborneSpeedPercent = 1f;
@@ -36,8 +36,8 @@ public class MovementLimiter : MonoBehaviour
 	// ----------------------------------------------------------------------------------
 	void Awake ()
 	{
-		this.Mover = this.GetComponent<CharacterMover>();
-		this.OriginalMoveSpeed = this.Mover.MoveSpeed;
+		this.Mover = this.GetComponent<ECM_Controller>();
+		this.OriginalMoveSpeed = this.Mover.speed;
 	}
 	// ----------------------------------------------------------------------------------
 	void Start ()
@@ -51,30 +51,37 @@ public class MovementLimiter : MonoBehaviour
 //			.AddTo(this);
 //#endif
 
-		this.Mover.ObserveEveryValueChanged((CharacterMover cm) => cm.IsGrounded)
+		this.Mover.ObserveEveryValueChanged((ECM_Controller cm) => cm.isGrounded)
 			.Subscribe((bool b) =>
             {
 				if (b)
-					this.Mover.MoveSpeed = this.OriginalMoveSpeed * this.GroundedSpeedPercent;
+					this.Mover.speed = this.OriginalMoveSpeed * this.GroundedSpeedPercent;
             })
 			.AddTo(this);
 
-		this.Mover.ObserveEveryValueChanged((CharacterMover cm) => cm.PlayerJumped)
+		this.Mover.ObserveEveryValueChanged((ECM_Controller cm) => cm.jump)
 			.Subscribe((bool b) =>
 			{
-				if (b && this.Mover.IsGrounded)
+				if (b && this.Mover.isGrounded)
 					this.Stamina.UseStamina(this.StaminaPerJump);
 
-				float jumpSpeed = this.Stamina.StaminaPercentage.Value > this.StaminaPerJump
+				float jumpSpeed = !b && this.Stamina.StaminaPercentage.Value > this.StaminaPerJump
 				? this.AirborneSpeedPercent
 				: this.GroundedSpeedPercent;
 
-				this.Mover.MoveSpeed = this.OriginalMoveSpeed * jumpSpeed;
+				this.Mover.speed = this.OriginalMoveSpeed * jumpSpeed;
 			})
 			.AddTo(this);
 	}
     // ----------------------------------------------------------------------------------
     // ============================================================================================
+
+	private void ModifyMovement(bool isGrounded, bool checkStamina)
+    {
+		//this.Mover.speed = !checkStamina || this.Stamina.StaminaPercentage.Value > this.StaminaPerJump
+		//	? this.OriginalMoveSpeed * this.AirborneSpeedPercent
+		//	: this.OriginalMoveSpeed * this.AirborneSpeedPercent;
+    }
 
 }
 // ================================================================================================

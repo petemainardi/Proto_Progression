@@ -63,9 +63,9 @@ public class BounceRegistrar : MonoBehaviour
     }
     // ----------------------------------------------------------------------------------
     // Collision ------------------------------------------------------------------------
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        BounceDetector bouncer = collision.collider.GetComponent<BounceDetector>();
+        BounceDetector bouncer = other.GetComponent<BounceDetector>();
         if (bouncer == null)
             return;
 

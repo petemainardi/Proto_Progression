@@ -41,10 +41,11 @@ public class HealthTracker : MonoBehaviour
     private float blinkTimer = 0;
 
     public Collider Collider { get; private set; }
-	// ============================================================================================
+    // ============================================================================================
 
-	// Mono =======================================================================================
-	void Awake ()
+    // Mono =======================================================================================
+    // ----------------------------------------------------------------------------------
+    void Awake ()
 	{
         this.Collider = this.GetComponent<Collider>();
 
@@ -89,11 +90,6 @@ public class HealthTracker : MonoBehaviour
     {
         //if (collision.collider.gameObject.name.Equals("Ground") || collision.collider.gameObject.name.Equals("Player")) return;
         this.CheckCollision(collision.gameObject);
-    }
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        //if (hit.collider.gameObject.name.Equals("Ground") || hit.collider.gameObject.name.Equals("Player")) return;
-        this.CheckCollision(hit.gameObject);
     }
     // ============================================================================================
 

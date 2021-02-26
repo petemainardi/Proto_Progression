@@ -63,22 +63,24 @@ public class BounceDetector : MonoBehaviour
     }
     // ----------------------------------------------------------------------------------
     // Collision ------------------------------------------------------------------------
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
         if (this.canBounce)
-            this.Bounce(collision);
+            this.Bounce(other);
         //else
-        //    Debug.Log($"Collided with {collision.collider.NameAndID()} but can't bounce.");
+        //    Debug.Log($"Collided with {other.NameAndID()} but can't bounce.");
     }
-    private void OnCollisionStay(Collision collision)
+    private void OnTriggerStay(Collider other)
     {
-        if (!this.trackedColliders.Contains(collision.collider) && this.canBounce)
-            this.Bounce(collision);
+        if (!this.trackedColliders.Contains(other) && this.canBounce)
+            this.Bounce(other);
+        //else
+        //    Debug.Log($"Colliding with {other.NameAndID()} but can't bounce.");
     }
-    private void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider other)
     {
-        //Debug.Log($"Removed {collision.collider.NameAndID()}");
-        this.trackedColliders.Remove(collision.collider);
+        //Debug.Log($"Removed {other.NameAndID()}");
+        this.trackedColliders.Remove(other);
     }
     // ----------------------------------------------------------------------------------
     // ============================================================================================
@@ -92,13 +94,13 @@ public class BounceDetector : MonoBehaviour
         // TODO: need to protect against or handle multiple subscriptions interfering with each other
     }
 
-    private void Bounce(Collision collision)
+    private void Bounce(Collider collider)
     {
-        //Debug.Log($"Bouncing on {collision.collider.NameAndID()}.");
+        //Debug.Log($"Bouncing on {collider.NameAndID()}.");
 
-        this.BounceInfo.Value = new BounceInfo(Vector3.up * this.bounceHeight, collision.collider); // TODO: Calculate collision normal for actual direction
+        this.BounceInfo.Value = new BounceInfo(Vector3.up * this.bounceHeight, collider); // TODO: Calculate collision normal for actual direction
         // TODO: probably should also bake bounce force into the vector based on the colliding object's properties instead of using bounceHeight
-        this.trackedColliders.Add(collision.collider);
+        this.trackedColliders.Add(collider);
 
         this.BounceInfo.Value = default;    // Not ideal, but only emits when value completely changes so...
     }

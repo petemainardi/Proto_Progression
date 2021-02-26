@@ -13,3 +13,4 @@ This game, a roguelite platformer, has several categories of progression:
 - DOTween (Assets/Plugins/Demigiant)
 - OdinInspector (Assets/Plugins/Sirenix)
 - UModeler (Assets/tripolygon)
+- Easy Character Movement (Assets/Easy Character Movement)

@@ -29,6 +29,10 @@ public class MovementLimiter : MonoBehaviour
 	[SerializeField, Range(0, 1)] private float GroundedSpeedPercent = 0.2f;
 	[SerializeField, Range(0, 1)] private float AirborneSpeedPercent = 1f;
 
+	[SerializeField, Required] private BounceDetector Bouncer;
+	private Collider lastBouncedOn;
+
+
 	[SerializeField, Range(0, 1)] private float StaminaPerJump = 0.25f;
 	// ============================================================================================
 
@@ -42,47 +46,38 @@ public class MovementLimiter : MonoBehaviour
 	// ----------------------------------------------------------------------------------
 	void Start ()
 	{
-//#if UNITY_EDITOR
-//		this.Mover.ObserveEveryValueChanged((CharacterMover cm) => cm.IsGrounded)
-//			.Subscribe((bool b) => Debug.Log($"Grounded {b}"))
-//			.AddTo(this);
-//		this.Mover.ObserveEveryValueChanged((CharacterMover cm) => cm.PlayerJumped)
-//			.Subscribe((bool b) => Debug.Log($"Jumped {b}"))
-//			.AddTo(this);
-//#endif
-
+		// Limit grounded movement speed
 		this.Mover.ObserveEveryValueChanged((ECM_Controller cm) => cm.isGrounded)
+			.Where((bool b) => b)
 			.Subscribe((bool b) =>
-            {
-				if (b)
-					this.Mover.speed = this.OriginalMoveSpeed * this.GroundedSpeedPercent;
-            })
+				this.Mover.speed = this.OriginalMoveSpeed * this.GroundedSpeedPercent
+				)
 			.AddTo(this);
 
+		// On jump, use stamina and airborne speed
 		this.Mover.ObserveEveryValueChanged((ECM_Controller cm) => cm.jump)
+			.Where((bool b) => b && this.Mover.CanJump)
 			.Subscribe((bool b) =>
 			{
-				if (b && this.Mover.isGrounded)
-					this.Stamina.UseStamina(this.StaminaPerJump);
+				this.Stamina.UseStamina(this.StaminaPerJump);
+				this.Mover.speed = this.OriginalMoveSpeed * this.AirborneSpeedPercent;
+			})
+			.AddTo(this);
 
-				float jumpSpeed = !b && this.Stamina.StaminaPercentage.Value > this.StaminaPerJump
-				? this.AirborneSpeedPercent
-				: this.GroundedSpeedPercent;
-
-				this.Mover.speed = this.OriginalMoveSpeed * jumpSpeed;
+		// Restore jump stamina when bouncing on a new target
+		// BUG: this is getting doubled...
+		this.Bouncer.BounceInfo
+			.Where((BounceInfo b) => this.lastBouncedOn != b.BouncedOn)
+			.Subscribe((BounceInfo b) =>
+			{
+				Debug.Log("Bounce reaction");
+				this.lastBouncedOn = b.BouncedOn;
+				this.Stamina.RegainStamina(this.StaminaPerJump);
 			})
 			.AddTo(this);
 	}
     // ----------------------------------------------------------------------------------
     // ============================================================================================
-
-	private void ModifyMovement(bool isGrounded, bool checkStamina)
-    {
-		//this.Mover.speed = !checkStamina || this.Stamina.StaminaPercentage.Value > this.StaminaPerJump
-		//	? this.OriginalMoveSpeed * this.AirborneSpeedPercent
-		//	: this.OriginalMoveSpeed * this.AirborneSpeedPercent;
-    }
-
 }
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.43062562, g: 0.8584906, b: 0.25511748, a: 1}
+  m_Color: {r: 0.41356096, g: 0.8235294, b: 0.29803923, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -354,5 +354,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3d8d42f38eed64aa9daaf919cbd4dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limiter: {fileID: 0}
+  tracker: {fileID: 0}
   FillImage: {fileID: 5527584348470710106}

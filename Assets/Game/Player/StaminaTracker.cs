@@ -36,7 +36,14 @@ public class StaminaTracker : MonoBehaviour
 	// Public Interface ===========================================================================
 	public void UseStamina(float percentage)
     {
+		percentage = Math.Abs(percentage);
 		this.StaminaPercentage.Value = Math.Max(0, this.StaminaPercentage.Value - percentage);
+    }
+
+	public void RegainStamina(float percentage)
+    {
+        percentage = Math.Abs(percentage);
+		this.StaminaPercentage.Value = Math.Min(1, this.StaminaPercentage.Value + percentage);
     }
 	// ============================================================================================
 

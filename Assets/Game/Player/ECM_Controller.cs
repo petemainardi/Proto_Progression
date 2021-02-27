@@ -24,11 +24,12 @@ public class ECM_Controller : BaseCharacterController
 	[SerializeField]
 	private BounceDetector Bouncer;
 	public bool CanBounce => this.movement.velocity.y < 0;
-    //private BoolReactiveProperty CanBounce = new BoolReactiveProperty();
     private Vector3 bounceForce;
 
-    // TEMP
-    [Sirenix.OdinInspector.Required]
+	public bool CanJump => this._canJump && this._midAirJumpCount < this.maxMidAirJumps;
+
+	// TEMP
+	[Sirenix.OdinInspector.Required]
 	public PlayerData PlayerData;
 	public float SprintMultiplier = 1.5f;
 

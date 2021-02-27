@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 7603785985027383987}
   - component: {fileID: 7603785985027383988}
   - component: {fileID: 7351611161172181728}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Shrinker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 7603785985777071224}
   - component: {fileID: 7603785985777071175}
   - component: {fileID: 7603785985777071174}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}

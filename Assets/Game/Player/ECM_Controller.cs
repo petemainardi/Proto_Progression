@@ -26,7 +26,8 @@ public class ECM_Controller : BaseCharacterController
 	public bool CanBounce => this.movement.velocity.y < 0;
     private Vector3 bounceForce;
 
-	public bool CanJump => this._canJump && this._midAirJumpCount < this.maxMidAirJumps;
+	public bool CanJump => this._canJump
+		&& (this.isGrounded || this._midAirJumpCount < this.maxMidAirJumps);// || this.maxMidAirJumps == 0);
 
 	// TEMP
 	[Sirenix.OdinInspector.Required]

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using Sirenix.OdinInspector;
 #pragma warning disable 0649    // Variable declared but never assigned to
 
 
@@ -11,50 +12,44 @@ using UniRx;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Manage a percentage representing a stamina value.
+ *  Limit the air control value of the attached CharacterMover component based on the currently
+ *  available stamina.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-public class StaminaTracker : MonoBehaviour
+[RequireComponent(typeof(ECM_Controller))]
+public class AirControlLimiter : MonoBehaviour
 {
 	// Fields =====================================================================================
-	public FloatReactiveProperty StaminaPercentage = new FloatReactiveProperty(1f);
+	[SerializeField, Required] private StaminaTracker Stamina;
 
-	[SerializeField, Range(0, 1)]
-	private float StaminaRegenPerSecond = 0.05f;
-
-	private List<Func<bool>> regenConditions = new List<Func<bool>>();
-    // ============================================================================================
-
-    // Mono =======================================================================================
-    private void Update()
-	{
-		foreach (Func<bool> condition in this.regenConditions)
-			if (!condition())
-				return;
-
-		this.StaminaPercentage.Value = 
-			Math.Min(1, this.StaminaPercentage.Value + this.StaminaRegenPerSecond * Time.deltaTime);
-	}
+	private ECM_Controller Mover;
+	[SerializeField, MinMaxSlider(0, 1)] private Vector2 controlRange;
+	public float MinControl => this.controlRange.x;
+	public float MaxControl => this.controlRange.y;
 	// ============================================================================================
 
-	// Public Interface ===========================================================================
-	public void UseStamina(float percentage)
-    {
-		percentage = Math.Abs(percentage);
-		this.StaminaPercentage.Value = Math.Max(0, this.StaminaPercentage.Value - percentage);
-    }
+	// Mono =======================================================================================
+	// ----------------------------------------------------------------------------------
+	void Awake ()
+	{
+		this.Mover = this.GetComponent<ECM_Controller>();
+	}
+	// ----------------------------------------------------------------------------------
+	void Start ()
+	{
+        this.Stamina.StaminaPercentage
+            .Subscribe((float s) => this.Mover.airControl = this.NormalizeToRange(s))
+			.AddTo(this);
+	}
+	// ----------------------------------------------------------------------------------
+	// ============================================================================================
 
-	public void RegainStamina(float percentage)
+	// ==================================================================================
+	public float NormalizeToRange(float stamina)
     {
-        percentage = Math.Abs(percentage);
-		this.StaminaPercentage.Value = Math.Min(1, this.StaminaPercentage.Value + percentage);
-    }
-
-	public void AddRegenCondition(Func<bool> isRegenAllowed)
-    {
-		this.regenConditions.Add(isRegenAllowed);
+		return Mathf.Clamp01(stamina) * (this.MaxControl - this.MinControl) + this.MinControl;
     }
 	// ============================================================================================
 

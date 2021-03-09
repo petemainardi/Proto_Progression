@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using UniRx.Triggers;
 using Sirenix.OdinInspector;
 #pragma warning disable 0649    // Variable declared but never assigned to
 
@@ -29,10 +30,6 @@ public class MovementLimiter : MonoBehaviour
 	[SerializeField, Range(0, 1)] private float GroundedSpeedPercent = 0.2f;
 	[SerializeField, Range(0, 1)] private float AirborneSpeedPercent = 1f;
 
-	[SerializeField, Required] private BounceDetector Bouncer;
-	private Collider lastBouncedOn;
-
-
 	[SerializeField, Range(0, 1)] private float StaminaPerJump = 0.25f;
 	// ============================================================================================
 
@@ -48,31 +45,22 @@ public class MovementLimiter : MonoBehaviour
 	{
 		// Limit grounded movement speed
 		this.Mover.ObserveEveryValueChanged((ECM_Controller cm) => cm.isGrounded)
-			.Where((bool b) => b)
+			.Where((bool b) => b && !this.Mover.isJumping)
 			.Subscribe((bool b) =>
 				this.Mover.speed = this.OriginalMoveSpeed * this.GroundedSpeedPercent
 				)
 			.AddTo(this);
 
-		// On jump, use stamina and airborne speed
-		this.Mover.ObserveEveryValueChanged((ECM_Controller cm) => cm.jump)
-			.Where((bool b) => b && this.Mover.CanJump)
+        // On jump, use stamina and airborne speed
+		// BUG: Because of the ECM tolerance for input time, this doesn't always trigger,
+		//		will need a more complex check or trigger condition
+        this.Mover.ObserveEveryValueChanged((ECM_Controller cm) => cm.jump)
+            .Where((bool b) => b && this.Mover.CanJump)
 			.Subscribe((bool b) =>
 			{
+				//Debug.Log("Jump");
 				this.Stamina.UseStamina(this.StaminaPerJump);
 				this.Mover.speed = this.OriginalMoveSpeed * this.AirborneSpeedPercent;
-			})
-			.AddTo(this);
-
-		// Restore jump stamina when bouncing on a new target
-		// BUG: this is getting doubled...
-		this.Bouncer.BounceInfo
-			.Where((BounceInfo b) => this.lastBouncedOn != b.BouncedOn)
-			.Subscribe((BounceInfo b) =>
-			{
-				Debug.Log("Bounce reaction");
-				this.lastBouncedOn = b.BouncedOn;
-				this.Stamina.RegainStamina(this.StaminaPerJump);
 			})
 			.AddTo(this);
 	}

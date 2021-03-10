@@ -29,6 +29,12 @@ public class DifficultyTimer : MonoBehaviour
     public AnimationCurve timePerCycle;
     private float currentCycleTime;
     private float timer;
+    private List<Func<bool>> timerConditions = new List<Func<bool>>();
+
+    public float CurrentTime => this.timer;
+    public float CurrentMaxTime => this.currentCycleTime;
+    public float CurrentTimePercent => this.timer / this.currentCycleTime;
+
 
     [DisplayAsString, LabelText("Current Difficulty")]
     public IntReactiveProperty Difficulty = new IntReactiveProperty(-1);
@@ -51,12 +57,17 @@ public class DifficultyTimer : MonoBehaviour
     // ----------------------------------------------------------------------------------
     void Update ()
 	{
-        this.timer += Time.deltaTime;
-        this.UpdateTimer();
+        if (this.timerConditions.Count == 0 || this.timerConditions.Any(c => c()))
+        {
+            this.timer += Time.deltaTime;
+            this.UpdateTimer();
+        }
     }
     // ----------------------------------------------------------------------------------
     // ============================================================================================
 
+    // Timer ======================================================================================
+    // ----------------------------------------------------------------------------------
     private void UpdateTimer()
     {
         if (this.timer >= this.currentCycleTime)
@@ -72,10 +83,13 @@ public class DifficultyTimer : MonoBehaviour
 
         this.timerFill.fillAmount = this.timer / this.currentCycleTime;
     }
-
-    public float CurrentTime => this.timer;
-    public float CurrentMaxTime => this.currentCycleTime;
-    public float CurrentTimePercent => this.timer / this.currentCycleTime;
+    // ----------------------------------------------------------------------------------
+    public void AddTimerCondition(Func<bool> condition)
+    {
+        this.timerConditions.Add(condition);
+    }
+    // ----------------------------------------------------------------------------------
+    // ============================================================================================
 }
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

@@ -59,7 +59,7 @@ public class Wanderer : MonoBehaviour
                 .AddTo(this);
         }
 
-        this.CheckWander();
+        this.wanderTarget = this.Wander();
     }
     // ----------------------------------------------------------------------------------
     void Update()

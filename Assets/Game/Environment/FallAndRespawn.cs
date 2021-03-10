@@ -19,18 +19,23 @@ using UnityEngine;
 // ================================================================================================
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(Rigidbody))]
-public class FallAndRespawn : MonoBehaviour
+public class FallAndRespawn : MonoBehaviour, Disappearable
 {
 	// Fields =====================================================================================
 	public Vector3 StartPos { get; private set; }
 	public Vector3 StartRot { get; private set; }
 
+	public MeshRenderer MeshRenderer;
 	public LayerMask Mask;
 	private Rigidbody rb;
+	private Collider Collider;
 
 	public float FallTime;
 	private float fallTimer;
 	private bool shouldFall;
+
+	public float Shakiness;
+	private IEnumerator shaking;
 
 	public float RespawnTime = 5f;
 	private float respawnTimer;
@@ -43,6 +48,9 @@ public class FallAndRespawn : MonoBehaviour
 	{
 		this.rb = this.GetComponent<Rigidbody>();
 		this.Constrain(true);
+		this.Collider = this.GetComponent<Collider>();
+
+		this.shaking = this.ShakeRoutine();
 	}
 	// ----------------------------------------------------------------------------------
 	void Start ()
@@ -53,12 +61,13 @@ public class FallAndRespawn : MonoBehaviour
 	// ----------------------------------------------------------------------------------
 	void Update ()
 	{
-		this.fallTimer -= Time.deltaTime;
-		if (this.shouldFall && this.fallTimer < 0)
+		this.fallTimer += Time.deltaTime;
+		if (this.shouldFall && this.fallTimer > this.FallTime)
         {
 			this.shouldFall = false;
 			this.Constrain(false);
 			this.respawnTimer = this.RespawnTime;
+			StopCoroutine(this.shaking);
 		}
 
 		this.respawnTimer -= Time.deltaTime;
@@ -67,15 +76,17 @@ public class FallAndRespawn : MonoBehaviour
 			this.Constrain(true);
 			this.transform.position = this.StartPos;
 			this.transform.rotation = Quaternion.Euler(this.StartRot);
+			this.Reappear();
         }
 	}
 	// ----------------------------------------------------------------------------------
 	private void OnCollisionEnter(Collision collision)
 	{
-		if ((this.Mask & (1 << collision.gameObject.layer)) != 0)
+		if (!this.shouldFall && (this.Mask & (1 << collision.gameObject.layer)) != 0)
         {
 			this.shouldFall = true;
-			this.fallTimer = this.FallTime;
+			this.fallTimer = 0;
+			StartCoroutine(this.shaking);
         }
 	}
 	// ----------------------------------------------------------------------------------
@@ -89,7 +100,43 @@ public class FallAndRespawn : MonoBehaviour
 			? RigidbodyConstraints.FreezeAll
 			: RigidbodyConstraints.None;
 	}
+
+	private IEnumerator ShakeRoutine()
+    {
+		while (true)
+        {
+			this.transform.localRotation = this.NoiseRotation();
+			yield return new WaitForEndOfFrame();
+        }
+	}
+
+	private float Noise(float seed) => (Mathf.PerlinNoise(seed, this.fallTimer * this.Shakiness) - 0.5f) * 2;
+	private Quaternion NoiseRotation() =>
+		Quaternion.Euler(
+			this.Noise(1) * this.Shakiness,
+			this.Noise(10) * this.Shakiness,
+			this.Noise(1) * this.Shakiness
+			);
 	// ============================================================================================
+
+	// Disappearable ==============================================================================
+	public Transform Transform => this.transform;
+	public void Disappear()
+    {
+		this.Collider.enabled = false;
+		this.rb.isKinematic = true;
+		if (this.MeshRenderer != null)
+			this.MeshRenderer.enabled = false;
+    }
+
+	public void Reappear()
+    {
+		this.Collider.enabled = true;
+		this.rb.isKinematic = false;
+		if (this.MeshRenderer != null)
+			this.MeshRenderer.enabled = true;
+    }
+    // ============================================================================================
 
 }
 // ================================================================================================

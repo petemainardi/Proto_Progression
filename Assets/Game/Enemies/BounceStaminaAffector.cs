@@ -3,8 +3,6 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniRx;
-using TMPro;
 #pragma warning disable 0649    // Variable declared but never assigned to
 
 
@@ -12,46 +10,41 @@ using TMPro;
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
 /**
- *  Allow IPointsRewarders to tell this to listen to when the award points, collecting the results
- *  in this central location.
+ *  Restore or expend the specified stamina when this gameobject is bounced upon.
  */
 // ================================================================================================
 // ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 // ================================================================================================
-public class PointsAccumulator : MonoBehaviour
+[RequireComponent(typeof(BounceRegistrar))]
+public class BounceStaminaAffector : MonoBehaviour
 {
-    // Fields =====================================================================================
-    private static List<PointsAccumulator> Accumulators = new List<PointsAccumulator>();
+	// Fields =====================================================================================
+	public BounceRegistrar Registrar { get; private set; }
 
-    [SerializeField, Sirenix.OdinInspector.Required]
-    private TextMeshProUGUI Text;
+	[SerializeField, Range(-1, 1)]
+	private float staminaOnBounce;
+	public float StaminaOnBounce => this.staminaOnBounce;
 
-    public IntReactiveProperty Points = new IntReactiveProperty();
+    [SerializeField]
+    private bool OnlyRestoreOnNewTarget = true;
     // ============================================================================================
 
     // Mono =======================================================================================
-    private void Awake()
-    {
-        if (!Accumulators.Contains(this))
-            Accumulators.Add(this);
-    }
-    // ============================================================================================
+    private void Awake() => this.Registrar = this.GetComponent<BounceRegistrar>();
 
-    // Registration ===============================================================================
-    public static void RegisterWithAllAccumulators(IPointsRewarder rewarder)
+    private void Start()
     {
-        Accumulators.ForEach(a => a.Register(rewarder));
-    }
-
-    public void Register(IPointsRewarder rewarder)
-    {
-        rewarder.Reward
-            .Subscribe((int i) =>
+        this.Registrar.SubscribeOnBounce((BounceDetector bd) =>
+        {
+            StaminaTracker staminaTracker = bd.GetComponentInParent<StaminaTracker>();
+            if (staminaTracker != null && (bd.LastBouncedOn != this.Registrar.Collider || !this.OnlyRestoreOnNewTarget))
             {
-                this.Points.Value += i;
-                this.Text.text = this.Points.Value.ToString();
-            })
-            .AddTo(this);
+                if (this.staminaOnBounce < 0)
+                    staminaTracker.UseStamina(this.staminaOnBounce);
+                else
+                    staminaTracker.RegainStamina(this.staminaOnBounce);
+            }
+        });
     }
     // ============================================================================================
 

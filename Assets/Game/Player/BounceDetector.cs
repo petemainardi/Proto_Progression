@@ -46,6 +46,7 @@ public class BounceDetector : MonoBehaviour
 {
     // Fields =====================================================================================
     private List<Collider> trackedColliders = new List<Collider>();
+    public Collider LastBouncedOn { get; private set; }
 
     private bool canBounce;
     [SerializeField]
@@ -101,6 +102,7 @@ public class BounceDetector : MonoBehaviour
         this.BounceInfo.Value = new BounceInfo(Vector3.up * this.bounceHeight, collider); // TODO: Calculate collision normal for actual direction
         // TODO: probably should also bake bounce force into the vector based on the colliding object's properties instead of using bounceHeight
         this.trackedColliders.Add(collider);
+        this.LastBouncedOn = collider;
 
         this.BounceInfo.Value = default;    // Not ideal, but only emits when value completely changes so...
     }

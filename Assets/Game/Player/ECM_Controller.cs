@@ -20,7 +20,7 @@ using UniRx;
 public class ECM_Controller : BaseCharacterController
 {
 	// Fields =====================================================================================
-
+	[Header("My stuff")]
 	[SerializeField]
 	private BounceDetector Bouncer;
 	public bool CanBounce => this.movement.velocity.y < 0;
